@@ -55,11 +55,12 @@ final class Pipeline
 
     /**
      * @return (TResult is void ? null : TResult)
+     * @throws PipelineFullyHandled
      */
     public function continue(): mixed
     {
         if ($this->handled) {
-            throw new \LogicException('Pipeline fully handled');
+            throw new PipelineFullyHandled('Pipeline fully handled');
         }
 
         $middleware = array_shift($this->middlewares);
