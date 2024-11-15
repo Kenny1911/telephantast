@@ -13,8 +13,6 @@ use Telephantast\Message\Message;
  */
 final class Pipeline
 {
-    private bool $started = false;
-
     private bool $handled = false;
 
     /**
@@ -64,14 +62,12 @@ final class Pipeline
             throw new \LogicException('Pipeline fully handled');
         }
 
-        if ($this->started) {
-            $this->middlewares->next();
-        } else {
-            $this->started = true;
-        }
-
         if ($this->middlewares->valid()) {
-            return $this->middlewares->current()->handle($this->messageContext, $this);
+            /** @var Middleware $middleware */
+            $middleware = $this->middlewares->current();
+            $this->middlewares->next();
+
+            return $middleware->handle($this->messageContext, $this);
         }
 
         $this->handled = true;
